@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Kitchen Plant Irrigation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 Kitchen Plant Irrigation</h1>
+            <p class="subtitle">Track watering schedules and reminders</p>
+            <div class="header-actions">
+                <button id="manage-plants-btn" class="btn-icon" title="Manage Plants">⚙️</button>
+                <button id="notifications-btn" class="btn-icon" title="Enable Notifications">🔔</button>
+            </div>
+        </header>
+
+        <div class="user-selector">
+            <label for="current-user">Who's watering?</label>
+            <select id="current-user">
+                <option value="">Select your name</option>
+                <option value="Flatmate 1">Flatmate 1</option>
+                <option value="Flatmate 2">Flatmate 2</option>
+                <option value="Flatmate 3">Flatmate 3</option>
+            </select>
+        </div>
+
+        <div id="plants-container" class="plants-grid">
+            <!-- Plants will be dynamically inserted here -->
+        </div>
+
+        <div class="history-section">
+            <h2>Recent Watering History</h2>
+            <div id="history-container" class="history-list">
+                <!-- History will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <footer>
+            <button id="clear-history-btn" class="btn-secondary">Clear All History</button>
+            <p class="version">V2 - Scheduling & Reminders</p>
+        </footer>
+    </div>
+
+    <!-- Plant Management Modal -->
+    <div id="plant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Manage Plants</h2>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="plant-list-edit" class="plant-list-edit">
+                    <!-- Plant list will be inserted here -->
+                </div>
+                <button id="add-plant-btn" class="btn-primary">+ Add New Plant</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Plant Form Modal -->
+    <div id="plant-form-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="form-modal-title">Add Plant</h2>
+                <button class="modal-close" id="close-form-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plant-form">
+                    <div class="form-group">
+                        <label for="plant-name">Plant Name *</label>
+                        <input type="text" id="plant-name" required placeholder="e.g., Basil">
+                    </div>
+                    <div class="form-group">
+                        <label for="plant-location">Location *</label>
+                        <input type="text" id="plant-location" required placeholder="e.g., Window Sill">
+                    </div>
+                    <div class="form-group">
+                        <label for="plant-icon">Icon (Emoji) *</label>
+                        <input type="text" id="plant-icon" required placeholder="🌱" maxlength="2">
+                        <small>Common: 🌱 🌿 🍃 🌵 🪴 🍅 🌶️ 🥬 🥒</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="watering-frequency">Watering Frequency (days) *</label>
+                        <input type="number" id="watering-frequency" required min="1" max="30" value="3">
+                        <small>How often does this plant need water?</small>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="cancel-form-btn" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Plant</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
