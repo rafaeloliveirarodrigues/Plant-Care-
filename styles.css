@@ -700,3 +700,101 @@ footer {
 
 
 /* Made with Bob */
+
+
+/* Shared household authentication */
+.auth-panel {
+    background: var(--secondary-green);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 28px;
+}
+
+.auth-panel h2 {
+    margin-bottom: 8px;
+}
+
+.auth-panel p {
+    color: var(--text-light);
+    margin-bottom: 16px;
+}
+
+.auth-form {
+    display: grid;
+    gap: 10px;
+    max-width: 460px;
+}
+
+.auth-form h3 {
+    margin-bottom: 4px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font: inherit;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.muted {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.household-summary {
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--white);
+    border-radius: 8px;
+}
+
+.household-summary p {
+    margin: 0 0 4px;
+}
+
+.household-summary code {
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--primary-green-dark);
+}
+
+.setup-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.btn-icon:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+}
+
+@media (max-width: 768px) {
+    .account-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .setup-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-panel {
+        padding: 18px;
+    }
+}

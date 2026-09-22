@@ -3,89 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌱 Kitchen Plant Irrigation</title>
+    <title>🌱 Kitchen Plant Care</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🌱 Kitchen Plant Irrigation</h1>
-            <p class="subtitle">Track watering schedules and reminders</p>
+            <h1>🌱 Kitchen Plant Care</h1>
+            <p class="subtitle">A shared watering schedule for your household</p>
             <div class="header-actions">
-                <button id="manage-plants-btn" class="btn-icon" title="Manage Plants">⚙️</button>
-                <button id="notifications-btn" class="btn-icon" title="Enable Notifications">🔔</button>
+                <button id="manage-plants-btn" class="btn-icon" title="Manage Plants" disabled>⚙️</button>
+                <button id="notifications-btn" class="btn-icon" title="Enable Notifications" disabled>🔔</button>
             </div>
         </header>
 
-        <div class="user-selector">
-            <label for="current-user">Who's watering?</label>
-            <select id="current-user">
-                <option value="">Select your name</option>
-                <option value="Flatmate 1">Flatmate 1</option>
-                <option value="Flatmate 2">Flatmate 2</option>
-                <option value="Flatmate 3">Flatmate 3</option>
-            </select>
-        </div>
-
-        <div id="plants-container" class="plants-grid">
-            <!-- Plants will be dynamically inserted here -->
-        </div>
-
-        <div class="history-section">
-            <h2>Recent Watering History</h2>
-            <div id="history-container" class="history-list">
-                <!-- History will be dynamically inserted here -->
+        <section id="auth-panel" class="auth-panel">
+            <div id="signed-out-view">
+                <h2>Join your plant-care household</h2>
+                <p>Enter your name and email. We’ll send you a secure sign-in link.</p>
+                <form id="sign-in-form" class="auth-form">
+                    <label for="display-name">Your name</label>
+                    <input id="display-name" type="text" maxlength="80" required autocomplete="name" placeholder="e.g., Rafael">
+                    <label for="email">Email address</label>
+                    <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
+                    <button class="btn-primary" type="submit">Email me a sign-in link</button>
+                </form>
             </div>
-        </div>
 
-        <footer>
-            <button id="clear-history-btn" class="btn-secondary">Clear All History</button>
-            <p class="version">V2 - Scheduling & Reminders</p>
-        </footer>
+            <div id="signed-in-view" hidden>
+                <div class="account-row">
+                    <div>
+                        <strong id="current-user">Signed in</strong>
+                        <p id="current-email" class="muted"></p>
+                    </div>
+                    <button id="sign-out-btn" class="btn-secondary" type="button">Sign out</button>
+                </div>
+                <div id="household-summary" class="household-summary" hidden>
+                    <p><strong id="household-name"></strong></p>
+                    <p>Invite code: <code id="invite-code"></code></p>
+                    <p class="muted">Share this code only with your household.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="household-setup" class="auth-panel" hidden>
+            <h2>Set up your shared garden</h2>
+            <p>Create a household for your group, or join an existing one with its invite code.</p>
+            <div class="setup-grid">
+                <form id="create-household-form" class="auth-form">
+                    <h3>Create a household</h3>
+                    <label for="household-name-input">Household name</label>
+                    <input id="household-name-input" type="text" maxlength="80" required placeholder="e.g., Kitchen plants">
+                    <button class="btn-primary" type="submit">Create household</button>
+                </form>
+                <form id="join-household-form" class="auth-form">
+                    <h3>Join a household</h3>
+                    <label for="household-code-input">Invite code</label>
+                    <input id="household-code-input" type="text" maxlength="12" required autocomplete="off" placeholder="e.g., 4AB91C2D">
+                    <button class="btn-secondary" type="submit">Join household</button>
+                </form>
+            </div>
+        </section>
+
+        <main id="app-content" hidden>
+            <div id="plants-container" class="plants-grid"></div>
+
+            <div class="history-section">
+                <h2>Recent Watering History</h2>
+                <div id="history-container" class="history-list"></div>
+            </div>
+
+            <footer>
+                <button id="clear-history-btn" class="btn-secondary">Clear All History</button>
+                <p class="version">V3 — Shared household PoC</p>
+            </footer>
+        </main>
     </div>
 
-    <!-- Plant Management Modal -->
-    <div id="plant-modal" class="modal">
-        <div class="modal-content">
+    <div id="plant-modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div class="modal-header">
                 <h2 id="modal-title">Manage Plants</h2>
-                <button class="modal-close" id="close-modal">&times;</button>
+                <button class="modal-close" id="close-modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="plant-list-edit" class="plant-list-edit">
-                    <!-- Plant list will be inserted here -->
-                </div>
+                <div id="plant-list-edit" class="plant-list-edit"></div>
                 <button id="add-plant-btn" class="btn-primary">+ Add New Plant</button>
             </div>
         </div>
     </div>
 
-    <!-- Add/Edit Plant Form Modal -->
-    <div id="plant-form-modal" class="modal">
-        <div class="modal-content">
+    <div id="plant-form-modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="form-modal-title">
             <div class="modal-header">
                 <h2 id="form-modal-title">Add Plant</h2>
-                <button class="modal-close" id="close-form-modal">&times;</button>
+                <button class="modal-close" id="close-form-modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="plant-form">
                     <div class="form-group">
-                        <label for="plant-name">Plant Name *</label>
-                        <input type="text" id="plant-name" required placeholder="e.g., Basil">
+                        <label for="plant-name">Plant name</label>
+                        <input type="text" id="plant-name" required maxlength="80" placeholder="e.g., Basil">
                     </div>
                     <div class="form-group">
-                        <label for="plant-location">Location *</label>
-                        <input type="text" id="plant-location" required placeholder="e.g., Window Sill">
+                        <label for="plant-location">Location</label>
+                        <input type="text" id="plant-location" required maxlength="80" placeholder="e.g., Window sill">
                     </div>
                     <div class="form-group">
-                        <label for="plant-icon">Icon (Emoji) *</label>
-                        <input type="text" id="plant-icon" required placeholder="🌱" maxlength="2">
-                        <small>Common: 🌱 🌿 🍃 🌵 🪴 🍅 🌶️ 🥬 🥒</small>
+                        <label for="plant-icon">Icon (emoji)</label>
+                        <input type="text" id="plant-icon" required placeholder="🌱" maxlength="12">
                     </div>
                     <div class="form-group">
-                        <label for="watering-frequency">Watering Frequency (days) *</label>
+                        <label for="watering-frequency">Watering frequency (days)</label>
                         <input type="number" id="watering-frequency" required min="1" max="30" value="3">
-                        <small>How often does this plant need water?</small>
                     </div>
                     <div class="form-actions">
                         <button type="button" id="cancel-form-btn" class="btn-secondary">Cancel</button>
@@ -96,6 +126,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
