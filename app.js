@@ -18,6 +18,7 @@ class PlantIrrigationApp {
             return;
         }
         this.supabase = window.supabase.createClient(this.config.url, this.config.publishableKey);
+        this.initializeWeatherFeature();
         this.setupEventListeners();
 
         const { data: { session } } = await this.supabase.auth.getSession();
@@ -40,6 +41,7 @@ class PlantIrrigationApp {
         document.getElementById('add-plant-btn').addEventListener('click', () => this.openPlantForm());
         document.getElementById('plant-form').addEventListener('submit', (event) => this.savePlant(event));
         document.getElementById('cancel-form-btn').addEventListener('click', () => this.closeModal('plant-form-modal'));
+        this.setupWeatherEventListeners();
         window.addEventListener('click', (event) => {
             if (event.target.classList.contains('modal')) this.closeModal(event.target.id);
         });
@@ -88,7 +90,7 @@ class PlantIrrigationApp {
         }
 
         const { data: household, error: householdError } = await this.supabase
-            .from('households').select('id, name, invite_code').eq('id', membership.household_id).single();
+            .from('households').select('id, name, invite_code, created_by, weather_location_label, weather_latitude, weather_longitude, weather_timezone, weather_summary, weather_updated_at').eq('id', membership.household_id).single();
         if (householdError) return this.showToast('Could not load household: ' + householdError.message);
 
         this.household = household;
@@ -97,6 +99,7 @@ class PlantIrrigationApp {
         document.getElementById('household-summary').hidden = false;
         document.getElementById('app-content').hidden = false;
         this.setAppControls(true);
+        await this.loadWeatherSettings();
 
         await this.loadData();
         this.checkNotificationPermission();
@@ -131,7 +134,9 @@ class PlantIrrigationApp {
 
         this.plants = plantsResult.data.map((plant) => ({
             id: plant.id, name: plant.name, location: plant.location, icon: plant.icon,
-            wateringFrequencyDays: plant.watering_frequency_days
+            wateringFrequencyDays: plant.watering_frequency_days,
+            growingEnvironment: plant.growing_environment || 'indoor',
+            plantType: plant.plant_type || 'custom'
         }));
         this.wateringLogs = logsResult.data.map((log) => ({
             id: log.id, plantId: log.plant_id, wateredBy: log.watered_by_name, timestamp: log.watered_at
@@ -144,6 +149,7 @@ class PlantIrrigationApp {
         this.realtimeChannel = this.supabase.channel('plant-care-' + this.household.id)
             .on('postgres_changes', { event: '*', schema: 'public', table: 'plants', filter: 'household_id=eq.' + this.household.id }, () => this.loadData())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'watering_logs' }, () => this.loadData())
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'households', filter: 'id=eq.' + this.household.id }, () => this.reloadHouseholdWeather())
             .subscribe();
     }
 
@@ -166,7 +172,7 @@ class PlantIrrigationApp {
             const lastWatered = lastWatering
                 ? '<div class="last-watered"><strong>Last watered:</strong><div class="last-watered-info">' + this.escapeHtml(this.getTimeAgo(lastWatering.timestamp)) + ' by ' + this.escapeHtml(lastWatering.wateredBy) + '</div></div>'
                 : '<div class="last-watered">Never watered yet</div>';
-            return '<article class="plant-card"><div class="status-badge status-' + status.class + '">' + status.text + '</div><div class="plant-header"><div class="plant-icon">' + this.escapeHtml(plant.icon) + '</div><div class="plant-info"><h3>' + this.escapeHtml(plant.name) + '</h3><div class="plant-location">📍 ' + this.escapeHtml(plant.location) + '</div></div></div>' + lastWatered + this.getNextWateringText(plant, lastWatering) + '<button class="water-btn" data-plant-id="' + plant.id + '">💧 Water Plant</button></article>';
+            return '<article class="plant-card"><div class="status-badge status-' + status.class + '">' + status.text + '</div><div class="plant-header"><div class="plant-icon">' + this.escapeHtml(plant.icon) + '</div><div class="plant-info"><h3>' + this.escapeHtml(plant.name) + '</h3><div class="plant-location">📍 ' + this.escapeHtml(plant.location) + '</div></div></div>' + lastWatered + this.getNextWateringText(plant, lastWatering) + this.getWeatherRecommendationMarkup(plant, lastWatering) + '<button class="water-btn" data-plant-id="' + plant.id + '">💧 Water Plant</button></article>';
         }).join('');
         container.querySelectorAll('.water-btn').forEach((button) => {
             button.addEventListener('click', () => this.waterPlant(button.dataset.plantId));
@@ -231,6 +237,8 @@ class PlantIrrigationApp {
             document.getElementById('plant-location').value = plant.location;
             document.getElementById('plant-icon').value = plant.icon;
             document.getElementById('watering-frequency').value = plant.wateringFrequencyDays;
+            document.getElementById('growing-environment').value = plant.growingEnvironment;
+            document.getElementById('plant-type').value = plant.plantType;
         }
         this.closeModal('plant-modal');
         document.getElementById('plant-form-modal').classList.add('show');
@@ -242,7 +250,9 @@ class PlantIrrigationApp {
             name: document.getElementById('plant-name').value.trim(),
             location: document.getElementById('plant-location').value.trim(),
             icon: document.getElementById('plant-icon').value.trim(),
-            watering_frequency_days: Number(document.getElementById('watering-frequency').value)
+            watering_frequency_days: Number(document.getElementById('watering-frequency').value),
+            growing_environment: document.getElementById('growing-environment').value,
+            plant_type: document.getElementById('plant-type').value
         };
         const result = this.editingPlantId
             ? await this.supabase.from('plants').update(values).eq('id', this.editingPlantId)
@@ -281,6 +291,7 @@ class PlantIrrigationApp {
     setAppControls(enabled) {
         document.getElementById('manage-plants-btn').disabled = !enabled;
         document.getElementById('notifications-btn').disabled = !enabled;
+        document.getElementById('weather-settings-btn').disabled = !enabled;
     }
 
     async checkNotificationPermission() {
