@@ -187,3 +187,21 @@ using (
       and public.is_household_member(plants.household_id)
   )
 );
+
+-- Broadcast shared updates to household members without manual refresh.
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'plants'
+  ) then
+    alter publication supabase_realtime add table public.plants;
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'watering_logs'
+  ) then
+    alter publication supabase_realtime add table public.watering_logs;
+  end if;
+end $$;
