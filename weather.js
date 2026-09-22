@@ -161,6 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
             await this.refreshWeather(true);
         },
 
+        async reloadHouseholdWeather() {
+            if (!this.household) return;
+            const { data, error } = await this.supabase.from('households')
+                .select('id, name, invite_code, created_by, weather_location_label, weather_latitude, weather_longitude, weather_timezone, weather_summary, weather_updated_at')
+                .eq('id', this.household.id)
+                .single();
+            if (error) return;
+            this.household = data;
+            this.setWeatherSettingsAccess();
+            this.renderWeatherSummary();
+            this.renderPlants();
+        },
+
         getWeatherRecommendation(plant, lastWatering) {
             if (!lastWatering || plant.growingEnvironment === 'indoor') return null;
             const daily = this.household?.weather_summary?.daily;
