@@ -798,3 +798,86 @@ footer {
         padding: 18px;
     }
 }
+
+
+/* Weather-informed watering guidance */
+.weather-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #EFF6FF;
+    border: 2px solid #BFDBFE;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.weather-section p {
+    margin-top: 4px;
+}
+
+.weather-guidance {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: #EFF6FF;
+    color: #1E3A8A;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin: -4px 0 15px;
+}
+
+.weather-search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.weather-search-form input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font: inherit;
+    background: var(--white);
+}
+
+.weather-search-form input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.weather-results {
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.location-result {
+    text-align: left;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text-dark);
+    cursor: pointer;
+    font: inherit;
+}
+
+.location-result:hover {
+    border-color: var(--primary-green);
+    background: var(--secondary-green);
+}
+
+@media (max-width: 768px) {
+    .weather-search-form {
+        flex-direction: column;
+    }
+
+    .weather-search-form .btn-primary {
+        width: 100%;
+    }
+}
