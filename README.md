@@ -1,237 +1,137 @@
-# 🌱 Kitchen Plant Irrigation App - V2
+# 🌱 Kitchen Plant Care
 
-An intelligent plant care system with watering schedules, reminders, and full plant management for you and your flatmates.
+A shared watering schedule for your household. Everyone signs in with their email, joins the same household, and sees the same plants, schedules and watering history — updated live across devices.
 
-## Features (V2 - Scheduling & Reminders)
+**Live app:** https://plant-care-ruddy.vercel.app/
 
-### Core Features
-✅ **Watering Schedules** - Set custom watering frequency for each plant
-✅ **Status Indicators** - Color-coded badges (All Good, Water Today, Overdue)
-✅ **Smart Reminders** - Browser notifications when plants need water
-✅ **Plant Management** - Add, edit, and delete plants with custom settings
-✅ **Next Watering Info** - See exactly when each plant needs water next
-✅ **One-Click Watering** - Easy button to log watering events
-✅ **Watering History** - View last 10 watering events with timestamps
-✅ **User Tracking** - See who watered which plant and when
-✅ **Persistent Storage** - All data saved in browser's LocalStorage
-✅ **Responsive Design** - Works perfectly on desktop, tablet, and mobile
-✅ **No Installation Required** - Pure HTML/CSS/JavaScript, no build tools
+## Features
 
-## Quick Start
+- **Shared households** – create a household and invite others with an 8-character invite code
+- **Passwordless sign-in** – email magic links via Supabase Auth
+- **Real-time sync** – when someone waters a plant or edits the list, everyone else's screen updates automatically
+- **Watering schedules** – each plant has its own frequency (every 1–30 days)
+- **Status badges** – ✅ All Good · 📅 Water Tomorrow · ⏰ Water Today · ⚠️ Overdue
+- **Watering history** – the last 10 waterings, with who did it and when
+- **Plant management** – add, edit and delete plants, with a name, location, emoji, growing environment and plant type
+- **Weather-informed guidance** – for outdoor and greenhouse plants, the local forecast can suggest watering a few days earlier (hot/dry) or later (rain)
+- **Browser notifications** – hourly reminders while the app is open
+- **No build step** – plain HTML, CSS and JavaScript
 
-### 1. Open the App
-Simply open `index.html` in any modern web browser:
-- Double-click the file, or
-- Right-click → Open With → Your browser, or
-- Drag and drop into browser window
+## How to use
 
-### 2. Enable Notifications (Recommended)
-Click the 🔔 bell icon in the header and allow notifications to get reminders.
+1. **Sign in** – enter your name and email, then open the link sent to your inbox.
+2. **Create or join a household**
+   - The first person creates a household. It starts with five default plants: Basil, Mint, Tomato, Succulent and Aloe Vera.
+   - Everyone else joins with the invite code shown at the top of the app. Each person can belong to one household.
+3. **Water plants** – tap **💧 Water Plant** on a card after watering it.
+4. **Manage plants** – use ⚙️ to add, edit or delete plants.
+5. **Notifications** – use 🔔 to turn on reminders.
+6. **Weather (household creator only)** – use 🌦️ to search for your city or postal code. The forecast is shared with the whole household and refreshed at most once an hour.
 
-### 3. Manage Your Plants
-Click the ⚙️ settings icon to add, edit, or remove plants. Set watering frequencies for each.
+### How weather guidance works
 
-### 4. Select Your Name
-Choose your name from the dropdown at the top of the page.
+Guidance appears only on plants marked **Outdoor** or **Greenhouse**; indoor plants always follow their base schedule. It uses the next three days of the [Open-Meteo](https://open-meteo.com/) forecast:
 
-### 5. Water Plants
-Click the "💧 Water Plant" button on any plant card. Status updates automatically!
+| Condition | Effect |
+|---|---|
+| Max temperature ≥ 30 °C and evapotranspiration ≥ 4 mm/day | Water earlier |
+| Max temperature ≥ 26 °C and evapotranspiration ≥ 3 mm/day | Water up to 2 days earlier |
+| ≥ 15 mm rain (outdoor only) | Water later |
+| ≥ 6 mm rain (outdoor only) | Water up to 2 days later |
 
-### 6. Monitor Status
-Check color-coded badges:
-- **Green (✅ All Good)** - Plant is well-watered
-- **Yellow (⏰ Water Today)** - Needs water today
-- **Red (⚠️ Overdue)** - Urgent, needs water now!
+How far the date can move depends on the plant type: herbs and fruiting vegetables up to 3 days, foliage and custom up to 2 days, and succulents 1 day.
 
-📖 **For detailed V2 features, see [V2_FEATURES.md](V2_FEATURES.md)**
+## Tech stack
 
-## Default Plants & Schedules
+- **Frontend:** vanilla HTML/CSS/JS (`index.html`, `styles.css`, `app.js`, `weather.js`)
+- **Backend:** [Supabase](https://supabase.com/) for Postgres, Auth (magic links), Row Level Security and Realtime
+- **Weather:** Open-Meteo forecast and geocoding APIs (free, no API key)
+- **Hosting:** [Vercel](https://vercel.com/) as a static site
 
-The app comes pre-configured with these plants and watering frequencies:
-- 🌿 **Basil** (Window Sill) - Every 2 days
-- 🍃 **Mint** (Counter) - Every 2 days
-- 🍅 **Tomato** (Window Sill) - Daily
-- 🌵 **Succulent** (Shelf) - Every 7 days
-- 🪴 **Aloe Vera** (Counter) - Every 10 days
+## Project structure
 
-**You can customize all of these!** Click the ⚙️ button to edit or add your own plants.
-
-## Customization
-
-### Change Flatmate Names
-Edit `index.html` lines 20-24 to update the names:
-```html
-<option value="Your Name">Your Name</option>
-<option value="Flatmate 1">Flatmate 1</option>
-<option value="Flatmate 2">Flatmate 2</option>
+```
+index.html                     App markup, modals and script includes
+styles.css                     Styling
+app.js                         Auth, households, plants, watering logs, realtime, notifications
+weather.js                     Location search, forecast refresh, watering recommendations
+supabase-config.js             Supabase project URL and publishable key
+supabase/schema.sql            Tables, RLS policies, household functions, realtime setup
+supabase/weather-migration.sql Weather columns, plant environment/type, creator update policy
 ```
 
-### Manage Plants (V2 Feature!)
-**No code editing needed!** Use the built-in plant management:
-1. Click ⚙️ button in header
-2. Add, edit, or delete plants
-3. Set custom watering frequencies
-4. Choose emoji icons
+## Running your own copy
 
-Available plant emojis: 🌱 🌿 🍃 🌾 🌵 🪴 🌴 🌳 🌲 🎋 🎍 🍀 ☘️ 🌷 🌹 🥀 🌺 🌸 🌼 🌻 🍅 🥬 🥒 🌶️ 🫑 
-🍈
-🍉
-🍊
-🍋
-🍋‍🟩
-🍌
-🍍
-🥭
-🍎
-🍏
-🍐
-🍑
-🍒
-🍓
-🫐
-🥝
-🍅
-🫒
-🥥
+### 1. Set up Supabase
 
-🍆
-🥔
-🥕
-🌽
-🌶️
-🫑
-🥒
-🥬
-🥦
-🧄
-🧅
-🥜
-🫘
-🌰
-🫚
-🫛
-🍄‍🟫
-🫜
-### Advanced: Edit Default Plants
-If you want to change the initial plants (for new users), edit `app.js` lines 575-579.
+1. Create a project at [supabase.com](https://supabase.com/).
+2. In the **SQL Editor**, run these in order:
+   1. `supabase/schema.sql`
+   2. `supabase/weather-migration.sql`
+3. Under **Authentication → Providers**, make sure **Email** is enabled.
+4. Under **Authentication → URL Configuration**, set the **Site URL** to your deployed URL (for example `https://your-app.vercel.app`) and add it to **Redirect URLs**. For local testing, also add `http://localhost:8000`.
 
-## Technical Details
+### 2. Configure the app
 
-### Data Structure
+Edit `supabase-config.js` with the values from **Project Settings → API**:
 
-**Plant Object:**
-```javascript
-{
-    id: string,
-    name: string,
-    location: string,
-    icon: string (emoji)
-}
+```js
+window.PLANT_CARE_SUPABASE_CONFIG = {
+  url: 'https://YOUR-PROJECT.supabase.co',
+  publishableKey: 'sb_publishable_...'
+};
 ```
 
-**Watering Log Object:**
-```javascript
-{
-    id: string,
-    plantId: string,
-    wateredBy: string,
-    timestamp: ISO 8601 date string
-}
+The publishable key is designed to be public. Access to data is enforced by the Row Level Security policies in `schema.sql`. **Never** put the `service_role` or secret key in this file.
+
+### 3. Run locally
+
+Serve the folder over HTTP, since magic links need a real URL rather than `file://`:
+
+```bash
+python3 -m http.server 8000
 ```
 
-### Storage
-- Uses browser's `localStorage` for data persistence
-- Data survives page refreshes
-- Stored locally on each device (not synced between devices)
-- Maximum storage: ~5-10MB (more than enough for this app)
+Then open http://localhost:8000.
 
-### Browser Compatibility
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+### 4. Deploy to Vercel
 
-## Sharing with Flatmates
+Import the GitHub repository in Vercel. It's a static site, so no build command or output directory is needed. Every push to `main` redeploys automatically.
 
-### Option 1: Local Network (Same WiFi)
-1. Install a simple HTTP server (if you have Python):
-   ```bash
-   cd plant-irrigation-app
-   python3 -m http.server 8000
-   ```
-2. Share your local IP address with flatmates (e.g., `http://192.168.1.100:8000`)
+## Data model
 
-### Option 2: Cloud Hosting (Free)
-Upload to any of these free hosting services:
-- **GitHub Pages** (recommended)
-- **Netlify**
-- **Vercel**
-- **Cloudflare Pages**
+| Table | Purpose |
+|---|---|
+| `households` | Name, invite code, creator, shared weather location and cached forecast |
+| `household_members` | Links users to their household |
+| `plants` | Name, location, icon, watering frequency, growing environment, plant type |
+| `watering_logs` | Which plant was watered, by whom, and when |
 
-### Option 3: Shared Device
-Keep the app on a shared tablet/computer in the kitchen.
-
-## Roadmap
-
-### ✅ V2 - Scheduling & Reminders (COMPLETED!)
-- ✅ Watering schedules (every X days)
-- ✅ Browser notifications
-- ✅ Visual status indicators (needs water, overdue)
-- ✅ Add/edit/delete plants
-- ✅ Next watering date calculations
-- ✅ Enhanced UI with modals
-
-### V3 - Full Features (Coming Next)
-- 📸 Plant photos
-- 📝 Care instructions and notes
-- 🌱 Multiple care types (fertilizing, pruning, repotting)
-- 📊 Health tracking and analytics
-- ☁️ Cloud sync across devices
-- 🌤️ Weather integration
-- 👥 User accounts and team features
+Row Level Security ensures users can only read and change data from their own household. Households are created and joined only through the `create_household` and `join_household` database functions.
 
 ## Troubleshooting
 
-**Data not saving?**
-- Check if browser allows localStorage
-- Try a different browser
-- Clear browser cache and reload
+**The sign-in link opens the wrong page or shows an error**
+Check that your deployed URL is set as the Site URL and listed in **Redirect URLs** in Supabase.
 
-**App not loading?**
-- Ensure all three files are in the same folder
-- Check browser console for errors (F12)
-- Try opening in incognito/private mode
+**"App configuration is missing"**
+`supabase-config.js` is missing values, or the Supabase library didn't load from the CDN.
 
-**Buttons disabled?**
-- Make sure you've selected your name from the dropdown
+**The 🌦️ button isn't visible**
+Only the person who created the household can set the weather location.
+
+**No weather guidance on a plant**
+Guidance appears only for outdoor and greenhouse plants that have been watered at least once, when the forecast actually suggests a change.
+
+**Notifications don't arrive**
+Reminders are sent only while the app is open in a browser tab, and only if notifications are allowed for the site.
+
+## Version history
+
+- **V3 – Shared households (current)** – Supabase backend, magic-link sign-in, households with invite codes, real-time sync, weather-informed guidance
+- **V2 – Scheduling and reminders** – watering frequencies, status badges, notifications, plant management (browser localStorage only)
+- **V1 – Basic log** – simple watering log with user tracking
 
 ## License
 
 Free to use and modify for personal use.
-
-## Version History
-
-**Current Version:** V2 - Scheduling & Reminders
-**Last Updated:** June 2026
-
-### Changelog
-
-**V2 (Current):**
-- ✅ Watering schedules with custom frequencies
-- ✅ Status indicators (All Good, Water Today, Overdue)
-- ✅ Browser notifications for reminders
-- ✅ Full plant management (Add/Edit/Delete)
-- ✅ Next watering date calculations
-- ✅ Enhanced UI with modals and animations
-
-**V1:**
-- ✅ Basic watering log
-- ✅ User tracking
-- ✅ Watering history
-- ✅ Simple plant list
-
-**Author:** Built with ❤️ for plant lovers
-
----
-
-📖 **For detailed V2 features and usage guide, see [V2_FEATURES.md](V2_FEATURES.md)**
