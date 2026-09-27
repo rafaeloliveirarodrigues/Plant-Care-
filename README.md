@@ -4,6 +4,8 @@ A shared watering schedule for your household. Everyone signs in with their emai
 
 **Live app:** https://plant-care-ruddy.vercel.app/
 
+📖 New here? Start with the [Quick Start Guide](QUICK_START.md), or see the full [Features Guide](FEATURES.md).
+
 ## Features
 
 - **Shared households** – create a household and invite others with an 8-character invite code
@@ -27,6 +29,15 @@ A shared watering schedule for your household. Everyone signs in with their emai
 4. **Manage plants** – use ⚙️ to add, edit or delete plants.
 5. **Notifications** – use 🔔 to turn on reminders.
 6. **Weather (household creator only)** – use 🌦️ to search for your city or postal code. The forecast is shared with the whole household and refreshed at most once an hour.
+
+### Plant emoji ideas
+
+Copy and paste any of these into the **Icon** field:
+
+- **Herbs and greenery:** 🌱 🌿 🍃 🌾 🌵 🪴 🌴 🌳 🌲 🎋 🎍 🍀 ☘️
+- **Flowers:** 🌷 🌹 🥀 🌺 🌸 🌼 🌻
+- **Fruit:** 🍈 🍉 🍊 🍋 🍋‍🟩 🍌 🍍 🥭 🍎 🍏 🍐 🍑 🍒 🍓 🫐 🥝 🍅 🫒 🥥
+- **Vegetables:** 🍆 🥔 🥕 🌽 🌶️ 🫑 🥒 🥬 🥦 🧄 🧅 🥜 🫘 🌰 🫚 🫛 🍄‍🟫 🫜
 
 ### How weather guidance works
 
@@ -135,3 +146,5 @@ Reminders are sent only while the app is open in a browser tab, and only if noti
 ## License
 
 Free to use and modify for personal use.
+
+**Author:** Built with ❤️ for plant lovers
